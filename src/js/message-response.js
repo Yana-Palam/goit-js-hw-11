@@ -1,22 +1,22 @@
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
-import { responseCounter } from './api-service';
-import { hideLoadMoreBtn } from './load-more-btn';
-import { INFO_MSG, FAILURE_MSG } from './const';
+import { pageCounter } from './api-service';
+import { toggleHideLoadMoreBtn } from './load-more-btn';
+import { INFO_MSG, FAILURE_MSG, PER_PAGE } from './const';
 
 export function actionsWithResponse(response) {
   const { totalHits, hits } = response.data;
 
   if (hits.length === 0) {
-    hideLoadMoreBtn();
+    toggleHideLoadMoreBtn('add');
     return Notify.failure(FAILURE_MSG);
   }
 
-  if (responseCounter === 1) {
+  if (pageCounter === 1) {
     return Notify.success(`Hooray! We found ${totalHits} images.`);
   }
 
-  if (responseCounter >= totalHits / 40) {
-    hideLoadMoreBtn();
+  if (pageCounter >= Math.floor(totalHits / PER_PAGE)) {
+    toggleHideLoadMoreBtn('add');
     Notify.info(INFO_MSG);
   }
 }

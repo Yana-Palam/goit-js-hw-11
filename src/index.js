@@ -1,19 +1,18 @@
 //Imports
 import SimpleLightbox from 'simplelightbox';
+import { Notify } from 'notiflix/build/notiflix-notify-aio';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 import './css/styles.css';
 import { refs } from './js/refs';
 import {
   getImage,
   resetPageCounter,
-  incrementResponseCounter,
-  resetResponseCounter,
+  incrementPageCounter,
 } from './js/api-service';
 import { renderMarkup, createMarkup, clearMarkup } from './js/markup';
 import {
-  showLoadMoreBtn,
-  disableLoadMoreBtn,
-  enableLoadMoreBtn,
+  disableLoadMoreButton,
+  toggleHideLoadMoreBtn,
 } from './js/load-more-btn';
 import { actionsWithResponse } from './js/message-response.js';
 
@@ -25,8 +24,6 @@ var lightbox = new SimpleLightbox('.gallery a', {
 
 let searchQuery = '';
 
-//Run
-
 //Listeners
 refs.searchForm.addEventListener('submit', onSubmitClick);
 refs.loadMoreBtn.addEventListener('click', onLoadMoreBtnClick);
@@ -37,8 +34,7 @@ function onSubmitClick(evt) {
   searchQuery = getValueFromInput(evt);
   if (!searchQuery) return;
 
-  showLoadMoreBtn();
-  resetResponseCounter();
+  toggleHideLoadMoreBtn('remove');
   clearMarkup(refs.gallery);
   resetPageCounter();
   renderMarkupOnPage(searchQuery);
@@ -50,16 +46,16 @@ function onLoadMoreBtnClick() {
 
 async function renderMarkupOnPage(searchQuery) {
   try {
-    disableLoadMoreBtn();
+    disableLoadMoreButton(true, 'Loading...');
     const response = await getImage(searchQuery);
 
     actionsWithResponse(response);
-    incrementResponseCounter();
+    incrementPageCounter();
     renderMarkup(refs.gallery, createMarkup(response));
     lightboxRefresh();
-    enableLoadMoreBtn();
+    disableLoadMoreButton(false, 'Load more');
   } catch (error) {
-    Notify.failure(`Error! ${error}`);
+    Notify.failure(`Error! ${error.message}`);
   }
 }
 

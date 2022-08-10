@@ -1,13 +1,12 @@
 export const BASE_URL = 'https://pixabay.com/api/';
+export const PER_PAGE = 40;
 
 export const SEARCH_PARAMS = new URLSearchParams({
   key: '29138945-719dfadf34447ae392f9f2b7e',
-  // q: `${searchQuery}`,
   image_type: 'photo',
   orientation: 'horizontal',
   safesearch: 'true',
-  per_page: 40,
-  // page: `${pageCounter}`,
+  per_page: `${PER_PAGE}`,
 });
 
 export const FAILURE_MSG =
